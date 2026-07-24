@@ -1,0 +1,59 @@
+@* FaltRad: rent presentationsskal (etikett + nivå-styling) runt ett fritt
+   valt input-element. Tar inget ansvar för bindning eller typkonvertering
+   – det sköter anroparen, eftersom de befintliga modellerna (ExtraheradFaktura
+   m.fl.) har init-only egenskaper och uppdateras via "with"-uttryck.
+   Niva styr färgen: Varning (bärnstensfärgad) = hård, blockerande avvikelse
+   från C#-validering. Info (blå) = modellens egen, icke-blockerande notering. *@
+
+<div class="falt-rad @NivaCssKlass">
+    <label class="falt-rad__label">
+        @Label
+        @if (Niva != FaltNiva.Ok)
+        {
+            <span class="falt-rad__flagga" title="@NivaTitel" aria-hidden="true">@NivaIkon</span>
+        }
+    </label>
+
+    <div class="falt-rad__input">
+        @ChildContent
+    </div>
+
+    @if (Niva != FaltNiva.Ok && !string.IsNullOrWhiteSpace(Forklaring))
+    {
+        <p class="falt-rad__forklaring">@Forklaring</p>
+    }
+</div>
+
+@code {
+    /// <summary>Fältets etikett, t.ex. "Organisationsnummer".</summary>
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = "";
+
+    /// <summary>Allvarlighetsgrad – styr färg, ikon och om Forklaring visas.</summary>
+    [Parameter]
+    public FaltNiva Niva { get; set; } = FaltNiva.Ok;
+
+    /// <summary>Kort förklaring som visas under fältet när Niva inte är Ok.</summary>
+    [Parameter]
+    public string? Forklaring { get; set; }
+
+    /// <summary>Själva input-elementet, satt av anroparen.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string NivaCssKlass => Niva switch
+    {
+        FaltNiva.Varning => "falt-rad--varning",
+        FaltNiva.Info => "falt-rad--info",
+        _ => "",
+    };
+
+    private string NivaIkon => Niva == FaltNiva.Varning ? "⚑" : "ℹ";
+
+    private string NivaTitel => Niva switch
+    {
+        FaltNiva.Varning => "Kräver granskning",
+        FaltNiva.Info => "Modellens notering",
+        _ => "",
+    };
+}

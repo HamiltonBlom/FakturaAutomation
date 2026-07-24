@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "FakturaExtraktion.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:49287;http://localhost:49288"
+    }
+  }
+}

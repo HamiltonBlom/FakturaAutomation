@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>FakturaExtraktion</RootNamespace>
+    <!-- Godtycklig GUID – krävs för dotnet user-secrets. Byt gärna ut den. -->
+    <UserSecretsId>a4f2b6c1-8e3d-4b7a-9c2e-1f5d6a8b3c90</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Generic Host: DI, konfiguration, options, loggning -->
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <!-- IHttpClientFactory -->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <!-- Retry/timeout/circuit breaker (Polly v8) för HttpClient -->
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
+    <!-- Stöd för "eller user-secrets" som alternativ till miljövariabeln -->
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Models/Options/Services flyttades hit i samband med Blazor-UI:t,
+         så att både konsolappen och webb-UI:t kan återanvända samma
+         extraktions-/valideringslogik utan att koden duplicerades. -->
+    <ProjectReference Include="..\FakturaExtraktion.Core\FakturaExtraktion.Core.csproj" />
+  </ItemGroup>
+
+</Project>

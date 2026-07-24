@@ -1,0 +1,495 @@
+@page "/"
+@using System.Text
+@inject IFakturaService FakturaService
+@inject IExportService ExportService
+@inject IInvoiceValidator Validator
+
+<section class="valj-faktura-panel">
+    <div class="valj-faktura-panel__rad">
+        <div class="falt-grupp">
+            <label class="falt-grupp__label" for="exempel-val">Exempelfaktura</label>
+            <select id="exempel-val" class="input-select" @bind="ValtExempel" @bind:after="OnExempelValtAsync">
+                <option value="">– välj ett exempel –</option>
+                @foreach (var namn in FakturaService.Exempelfakturor)
+                {
+                    <option value="@namn">@namn</option>
+                }
+            </select>
+        </div>
+
+        <div class="falt-grupp">
+            <label class="falt-grupp__label" for="fil-upload">eller ladda upp en .txt- eller .pdf-fil</label>
+            <InputFile id="fil-upload" class="input-file" OnChange="OnFilUppladdad" accept=".txt,text/plain,.pdf,application/pdf" />
+        </div>
+
+        <button type="button" class="btn btn--primary" disabled="@(!KanKoraExtraktion)" @onclick="KorExtraktionAsync">
+            @(Laddar ? "Extraherar…" : "Kör extraktion")
+        </button>
+
+        @if (Faktura is not null)
+        {
+            <button type="button" class="btn btn--tyst" @onclick="Nollstall">Välj en annan faktura</button>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Felmeddelande))
+    {
+        <p class="felmeddelande">⚠ @Felmeddelande</p>
+    }
+</section>
+
+@if (Faktura is not null && GranskningResultat is not null)
+{
+    // Fångas i lokala variabler (inte fälten direkt) så att C#:s
+    // null-analys håller dem icke-null genom hela blocket, även efter
+    // mellanliggande metodanrop som FaltNivaFor/FaltForklaring.
+    var faktura = Faktura;
+    var granskning = GranskningResultat;
+
+    <div class="banner @(granskning.KräverGranskning ? "banner--amber" : "banner--forest")">
+        <span class="banner__ikon" aria-hidden="true">@(granskning.KräverGranskning ? "⚑" : "✓")</span>
+        <span class="banner__text">@BannerText</span>
+    </div>
+
+    @if (granskning.KräverGranskning && granskning.Avvikelser.Count > 0)
+    {
+        <ul class="banner__lista">
+            @foreach (var avvikelse in granskning.Avvikelser)
+            {
+                <li>@avvikelse</li>
+            }
+        </ul>
+    }
+
+    @if (granskning.ModellNoteringar.Count > 0)
+    {
+        <div class="info-panel">
+            <span class="info-panel__ikon" aria-hidden="true">ℹ</span>
+            <div>
+                <p class="info-panel__rubrik">
+                    Modellen har @granskning.ModellNoteringar.Count notering@(granskning.ModellNoteringar.Count == 1 ? "" : "ar") –
+                    blockerar inte godkännande
+                </p>
+                <ul class="info-panel__lista">
+                    @foreach (var notering in granskning.ModellNoteringar)
+                    {
+                        <li>@notering</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div class="granskning-grid">
+        <div class="panel">
+            <h2 class="panel__rubrik">Leverantör &amp; faktura</h2>
+
+            <FaltRad Label="Leverantör" Niva="@FaltNivaFor("leverantor_namn")" Forklaring="@FaltForklaring("leverantor_namn")">
+                <input class="falt-input" value="@faktura.LeverantorNamn"
+                       @oninput="e => UppdateraFaktura(f => f with { LeverantorNamn = Text(e.Value) })" />
+            </FaltRad>
+
+            <FaltRad Label="Organisationsnummer" Niva="@FaltNivaFor("organisationsnummer")" Forklaring="@FaltForklaring("organisationsnummer")">
+                <input class="falt-input" placeholder="NNNNNN-NNNN" value="@faktura.Organisationsnummer"
+                       @oninput="e => UppdateraFaktura(f => f with { Organisationsnummer = Text(e.Value) })" />
+            </FaltRad>
+
+            <FaltRad Label="Fakturanummer" Niva="@FaltNivaFor("fakturanummer")" Forklaring="@FaltForklaring("fakturanummer")">
+                <input class="falt-input" value="@faktura.Fakturanummer"
+                       @oninput="e => UppdateraFaktura(f => f with { Fakturanummer = Text(e.Value) })" />
+            </FaltRad>
+
+            <FaltRad Label="Fakturadatum" Niva="@FaltNivaFor("fakturadatum")" Forklaring="@FaltForklaring("fakturadatum")">
+                <input type="date" class="falt-input" value="@faktura.Fakturadatum"
+                       @onchange="e => UppdateraFaktura(f => f with { Fakturadatum = Text(e.Value) })" />
+            </FaltRad>
+
+            <FaltRad Label="Förfallodatum" Niva="@FaltNivaFor("forfallodatum")" Forklaring="@FaltForklaring("forfallodatum")">
+                <input type="date" class="falt-input" value="@faktura.Forfallodatum"
+                       @onchange="e => UppdateraFaktura(f => f with { Forfallodatum = Text(e.Value) })" />
+            </FaltRad>
+
+            <FaltRad Label="Valuta" Niva="@FaltNivaFor("valuta")" Forklaring="@FaltForklaring("valuta")">
+                <input class="falt-input falt-input--kort" value="@faktura.Valuta"
+                       @oninput="e => UppdateraFaktura(f => f with { Valuta = Text(e.Value) })" />
+            </FaltRad>
+
+            <h2 class="panel__rubrik">Belopp</h2>
+
+            <FaltRad Label="Belopp exkl. moms" Niva="@FaltNivaFor("belopp_ex_moms")" Forklaring="@FaltForklaring("belopp_ex_moms")">
+                <input class="falt-input falt-input--belopp" inputmode="decimal" value="@FormateraBelopp(faktura.BeloppExMoms)"
+                       @onchange="e => UppdateraFaktura(f => f with { BeloppExMoms = TolkaBelopp(e.Value) })" />
+            </FaltRad>
+
+            <FaltRad Label="Moms" Niva="@FaltNivaFor("momsbelopp")" Forklaring="@FaltForklaring("momsbelopp")">
+                <input class="falt-input falt-input--belopp" inputmode="decimal" value="@FormateraBelopp(faktura.Momsbelopp)"
+                       @onchange="e => UppdateraFaktura(f => f with { Momsbelopp = TolkaBelopp(e.Value) })" />
+            </FaltRad>
+
+            <FaltRad Label="Moms %" Niva="@FaltNivaFor("moms_procent")" Forklaring="@FaltForklaring("moms_procent")">
+                <input class="falt-input falt-input--kort" inputmode="decimal" value="@FormateraProcent(faktura.MomsProcent)"
+                       @onchange="e => UppdateraFaktura(f => f with { MomsProcent = TolkaBelopp(e.Value) })" />
+            </FaltRad>
+
+            <FaltRad Label="Totalt belopp" Niva="@FaltNivaFor("totalt_belopp")" Forklaring="@FaltForklaring("totalt_belopp")">
+                <input class="falt-input falt-input--belopp" inputmode="decimal" value="@FormateraBelopp(faktura.TotaltBelopp)"
+                       @onchange="e => UppdateraFaktura(f => f with { TotaltBelopp = TolkaBelopp(e.Value) })" />
+            </FaltRad>
+
+            <h2 class="panel__rubrik">Betalning</h2>
+
+            <FaltRad Label="Bankgiro" Niva="@FaltNivaFor("bankgiro")" Forklaring="@FaltForklaring("bankgiro")">
+                <input class="falt-input" value="@faktura.Betalning.Bankgiro"
+                       @oninput="e => UppdateraFaktura(f => f with { Betalning = f.Betalning with { Bankgiro = Text(e.Value) } })" />
+            </FaltRad>
+
+            <FaltRad Label="Plusgiro" Niva="@FaltNivaFor("plusgiro")" Forklaring="@FaltForklaring("plusgiro")">
+                <input class="falt-input" value="@faktura.Betalning.Plusgiro"
+                       @oninput="e => UppdateraFaktura(f => f with { Betalning = f.Betalning with { Plusgiro = Text(e.Value) } })" />
+            </FaltRad>
+
+            <FaltRad Label="IBAN" Niva="@FaltNivaFor("iban")" Forklaring="@FaltForklaring("iban")">
+                <input class="falt-input" value="@faktura.Betalning.Iban"
+                       @oninput="e => UppdateraFaktura(f => f with { Betalning = f.Betalning with { Iban = Text(e.Value) } })" />
+            </FaltRad>
+
+            <FaltRad Label="OCR" Niva="@FaltNivaFor("ocr")" Forklaring="@FaltForklaring("ocr")">
+                <input class="falt-input" value="@faktura.Betalning.Ocr"
+                       @oninput="e => UppdateraFaktura(f => f with { Betalning = f.Betalning with { Ocr = Text(e.Value) } })" />
+            </FaltRad>
+        </div>
+
+        <div class="panel">
+            <h2 class="panel__rubrik">Radposter</h2>
+            <Radpostabell Radposter="@faktura.Radposter" RadposterAndrade="OnRadposterAndrade" />
+        </div>
+    </div>
+
+    <div class="godkann-rad">
+        @if (ArGodkand)
+        {
+            <p class="godkann-bekraftelse">✓ Skickad till ekonomisystem</p>
+        }
+        else
+        {
+            <button type="button" class="btn btn--primary btn--stor"
+                    disabled="@(granskning.KräverGranskning || Godkanner)" @onclick="GodkannAsync">
+                @(Godkanner ? "Godkänner…" : "Godkänn faktura")
+            </button>
+            @if (granskning.KräverGranskning)
+            {
+                <span class="godkann-rad__hjalptext">Åtgärda avvikelserna ovan för att kunna godkänna.</span>
+            }
+        }
+    </div>
+
+    <div class="forklaring-rad">
+        <span class="forklaring-rad__titel">Färgförklaring</span>
+        <span class="forklaring-post">
+            <span class="forklaring-post__prick forklaring-post__prick--forest"></span>
+            Grönt – redo att godkännas, inget att åtgärda
+        </span>
+        <span class="forklaring-post">
+            <span class="forklaring-post__prick forklaring-post__prick--varning"></span>
+            ⚑ Gult – hård avvikelse (matte, format eller datum stämmer inte), blockerar godkännande
+        </span>
+        <span class="forklaring-post">
+            <span class="forklaring-post__prick forklaring-post__prick--info"></span>
+            ℹ Blått – Claudes egen notering, blockerar inte godkännande
+        </span>
+    </div>
+}
+
+@code {
+    private string? ValtExempel;
+    private string FakturaTextInput = "";
+    private byte[]? UppladdadPdfBytes;
+    private ExtraheradFaktura? Faktura;
+    private GranskningsResultat? GranskningResultat;
+    private bool Laddar;
+    private bool Godkanner;
+    private bool ArGodkand;
+    private string? Felmeddelande;
+
+    private bool KanKoraExtraktion =>
+        !Laddar && (!string.IsNullOrWhiteSpace(FakturaTextInput) || UppladdadPdfBytes is not null);
+
+    private string BannerText
+    {
+        get
+        {
+            var granskning = GranskningResultat;
+            if (granskning is null)
+            {
+                return "";
+            }
+
+            if (!granskning.KräverGranskning)
+            {
+                return "Redo att godkänna";
+            }
+
+            var antal = granskning.Avvikelser.Count;
+            return $"Kräver granskning: {antal} avvikelse{(antal == 1 ? "" : "r")}";
+        }
+    }
+
+    // Kopplar backend-kodens fältnamn (osakra_falt) och de meddelandemönster
+    // InvoiceValidator faktiskt genererar till rätt fält i vyn, så att
+    // markeringen kan visas per fält. GranskningsResultat.Avvikelser är fri
+    // text utan fältkoppling i typen, så det här är en enkel UI-heuristik –
+    // inte ny valideringslogik. Ändras meddelandetexterna i backend behöver
+    // nycklarna nedan uppdateras i takt med det.
+    private static readonly Dictionary<string, string[]> AvvikelseNycklar = new()
+    {
+        ["organisationsnummer"] = ["organisationsnummer"],
+        ["fakturadatum"] = ["datum"],
+        ["forfallodatum"] = ["datum"],
+        ["belopp_ex_moms"] = ["summan går inte ihop", "summakontrollera"],
+        ["momsbelopp"] = ["summan går inte ihop", "summakontrollera"],
+        ["totalt_belopp"] = ["summan går inte ihop", "summakontrollera"],
+    };
+
+    private static readonly CultureInfo SvenskKultur = CultureInfo.GetCultureInfo("sv-SE");
+
+    private async Task OnExempelValtAsync()
+    {
+        Felmeddelande = null;
+        UppladdadPdfBytes = null;
+
+        if (string.IsNullOrWhiteSpace(ValtExempel))
+        {
+            FakturaTextInput = "";
+            return;
+        }
+
+        FakturaTextInput = await FakturaService.LasExempelAsync(ValtExempel, CancellationToken.None);
+    }
+
+    private async Task OnFilUppladdad(InputFileChangeEventArgs e)
+    {
+        const long maxStorlek = 8 * 1024 * 1024; // 8 MB – PDF-fakturor är oftast större än textfiler
+
+        try
+        {
+            var arPdf = e.File.Name.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(e.File.ContentType, "application/pdf", StringComparison.OrdinalIgnoreCase);
+
+            await using var stream = e.File.OpenReadStream(maxStorlek);
+            using var buffer = new MemoryStream();
+            await stream.CopyToAsync(buffer);
+            var bytes = buffer.ToArray();
+
+            if (arPdf)
+            {
+                // PDF:en skickas rå till Claude (multimodalt) – ingen lokal
+                // textextraktion. Det gav betydligt bättre träffsäkerhet på
+                // fakturor med tabeller/kolumner än att först gissa fram
+                // text lokalt med ett textextraktionsbibliotek.
+                UppladdadPdfBytes = bytes;
+                FakturaTextInput = "";
+            }
+            else
+            {
+                UppladdadPdfBytes = null;
+                FakturaTextInput = Encoding.UTF8.GetString(bytes);
+            }
+
+            ValtExempel = null;
+            Felmeddelande = null;
+        }
+        catch (Exception ex)
+        {
+            Felmeddelande = $"Kunde inte läsa filen: {ex.Message}";
+        }
+    }
+
+    private async Task KorExtraktionAsync()
+    {
+        if (string.IsNullOrWhiteSpace(FakturaTextInput) && UppladdadPdfBytes is null)
+        {
+            Felmeddelande = "Välj ett exempel eller ladda upp en fakturafil (.txt eller .pdf) först.";
+            return;
+        }
+
+        Laddar = true;
+        Felmeddelande = null;
+        ArGodkand = false;
+        Faktura = null;
+        GranskningResultat = null;
+
+        try
+        {
+            var resultat = UppladdadPdfBytes is { } pdfBytes
+                ? await FakturaService.GranskaPdfAsync(pdfBytes, CancellationToken.None)
+                : await FakturaService.GranskaAsync(FakturaTextInput, CancellationToken.None);
+
+            Faktura = resultat.Faktura;
+            GranskningResultat = resultat.Granskning;
+        }
+        catch (Exception ex)
+        {
+            Felmeddelande = $"Extraktionen misslyckades: {ex.Message}";
+        }
+        finally
+        {
+            Laddar = false;
+        }
+    }
+
+    private void Nollstall()
+    {
+        ValtExempel = null;
+        FakturaTextInput = "";
+        UppladdadPdfBytes = null;
+        Faktura = null;
+        GranskningResultat = null;
+        Felmeddelande = null;
+        ArGodkand = false;
+    }
+
+    /// <summary>
+    /// Uppdaterar fakturan via ett "with"-uttryck (den befintliga modellen
+    /// har init-only egenskaper) och kör direkt om IInvoiceValidator –
+    /// samma valideringslogik som backend redan har, ingen ny logik här.
+    ///
+    /// Rensar också modellens egna osäkerhetssignaler (osakra_falt,
+    /// granskning_kravs, noteringar): så fort en människa skrivit in ett
+    /// värde för hand är Claudes kommentar om sin ursprungliga, nu
+    /// eventuellt överskrivna tolkning inte längre relevant. Det påverkar
+    /// bara den informativa, blå rutan/fältmarkeringen – de hårda
+    /// C#-kontrollerna (Avvikelser/KräverGranskning) är opåverkade.
+    /// </summary>
+    private void UppdateraFaktura(Func<ExtraheradFaktura, ExtraheradFaktura> uppdatera)
+    {
+        var nuvarande = Faktura;
+        if (nuvarande is null)
+        {
+            return;
+        }
+
+        var uppdaterad = uppdatera(nuvarande) with
+        {
+            GranskningKravs = false,
+            OsakraFalt = [],
+            Noteringar = null,
+        };
+
+        Faktura = uppdaterad;
+        GranskningResultat = Validator.Validera(uppdaterad);
+        ArGodkand = false; // en ändring efter godkännande gör godkännandet ogiltigt
+    }
+
+    private Task OnRadposterAndrade(IReadOnlyList<Radpost> nyaRadposter)
+    {
+        UppdateraFaktura(f => f with { Radposter = nyaRadposter });
+        return Task.CompletedTask;
+    }
+
+    private async Task GodkannAsync()
+    {
+        var faktura = Faktura;
+        var granskning = GranskningResultat;
+        if (faktura is null || granskning is null || granskning.KräverGranskning || Godkanner)
+        {
+            return;
+        }
+
+        Godkanner = true;
+        try
+        {
+            await ExportService.ExporteraAsync(faktura, CancellationToken.None);
+            ArGodkand = true;
+        }
+        catch (Exception ex)
+        {
+            Felmeddelande = $"Export misslyckades: {ex.Message}";
+        }
+        finally
+        {
+            Godkanner = false;
+        }
+    }
+
+    /// <summary>
+    /// Avgör vilken nivå ett fält ska markeras med. Hård, blockerande
+    /// avvikelse (C#-validering, granskning.Avvikelser) väger tyngre än
+    /// modellens egen, icke-blockerande flagga (faktura.OsakraFalt) – ett
+    /// fält som har båda visas som Varning, inte Info.
+    /// </summary>
+    private FaltNiva FaltNivaFor(string schemaFalt)
+    {
+        var granskning = GranskningResultat;
+
+        if (granskning is not null && AvvikelseNycklar.TryGetValue(schemaFalt, out var nycklar)
+            && granskning.Avvikelser.Any(a => nycklar.Any(n => a.Contains(n, StringComparison.OrdinalIgnoreCase))))
+        {
+            return FaltNiva.Varning;
+        }
+
+        var faktura = Faktura;
+        if (faktura is not null && faktura.OsakraFalt.Any(f => f.Contains(schemaFalt, StringComparison.OrdinalIgnoreCase)))
+        {
+            return FaltNiva.Info;
+        }
+
+        return FaltNiva.Ok;
+    }
+
+    private string? FaltForklaring(string schemaFalt)
+    {
+        var granskning = GranskningResultat;
+
+        if (granskning is not null && AvvikelseNycklar.TryGetValue(schemaFalt, out var nycklar))
+        {
+            var traff = granskning.Avvikelser.FirstOrDefault(a => nycklar.Any(n => a.Contains(n, StringComparison.OrdinalIgnoreCase)));
+            if (traff is not null)
+            {
+                return traff;
+            }
+        }
+
+        var faktura = Faktura;
+        if (faktura is null)
+        {
+            return null;
+        }
+
+        var flaggadAvModellen = faktura.OsakraFalt.Any(f => f.Contains(schemaFalt, StringComparison.OrdinalIgnoreCase));
+        if (!flaggadAvModellen)
+        {
+            return null;
+        }
+
+        return !string.IsNullOrWhiteSpace(faktura.Noteringar)
+            ? faktura.Noteringar
+            : "Modellen flaggade det här fältet som osäkert.";
+    }
+
+    private static string? Text(object? varde) =>
+        varde?.ToString() is { Length: > 0 } s ? s : null;
+
+    private static string FormateraBelopp(decimal? varde) =>
+        varde is { } v ? v.ToString("N2", SvenskKultur) : "";
+
+    private static string FormateraProcent(decimal? varde) =>
+        varde is { } v ? v.ToString("0.##", SvenskKultur) : "";
+
+    private static decimal? TolkaBelopp(object? varde)
+    {
+        var text = varde?.ToString();
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return null;
+        }
+
+        // Normalisera bort tusentalsavgränsare (mellanslag/NBSP) och byt
+        // decimalkomma mot punkt, så "1 697,00", "1697,00" och "1697.00"
+        // alla tolkas korrekt oavsett vad användaren råkar skriva.
+        var normaliserad = text.Replace("\u00A0", "").Replace(" ", "").Replace(",", ".");
+
+        return decimal.TryParse(normaliserad, NumberStyles.Number, CultureInfo.InvariantCulture, out var tal)
+            ? tal
+            : null;
+    }
+}

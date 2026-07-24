@@ -1,0 +1,12 @@
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\FakturaExtraktion.Core.csproj.AssemblyReference.cache
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\FakturaExtraktion.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\FakturaExtraktion.Core.AssemblyInfoInputs.cache
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\FakturaExtraktion.Core.AssemblyInfo.cs
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\FakturaExtraktion.Core.csproj.CoreCompileInputs.cache
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\bin\Debug\net8.0\FakturaExtraktion.Core.deps.json
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\bin\Debug\net8.0\FakturaExtraktion.Core.dll
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\bin\Debug\net8.0\FakturaExtraktion.Core.pdb
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\FakturaExtraktion.Core.dll
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\refint\FakturaExtraktion.Core.dll
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\FakturaExtraktion.Core.pdb
+D:\Projekt\.net\FakturaAutomation\FakturaExtraktion.Core\obj\Debug\net8.0\ref\FakturaExtraktion.Core.dll

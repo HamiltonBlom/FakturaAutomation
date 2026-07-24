@@ -1,0 +1,30 @@
+FAKTURA
+
+Kontorsmaterial Svenska AB
+Organisationsnummer: 556677-8899
+Storgatan 12
+111 22 Stockholm
+
+Fakturanummer: 2026-0417
+Fakturadatum: 2026-06-02
+Förfallodatum: 2026-06-16
+
+Fakturamottagare:
+Exempelbolaget AB
+Kundnummer: 4711
+
+Specifikation:
+Antal   Beskrivning                          À-pris      Belopp
+10      A4-papper, 500 ark                   45,00 kr     450,00 kr
+2       Bläckpatron HP 305 svart              299,00 kr    598,00 kr
+1       Skrivbordslampa LED                   649,00 kr    649,00 kr
+
+Belopp exkl. moms:            1 697,00 kr
+Moms (25 %):                    424,25 kr
+Att betala:                   2 121,25 kr
+
+Betalningsvillkor: 14 dagar netto
+Bankgiro: 123-4567
+OCR-nummer: 34029981123
+
+Valuta: SEK

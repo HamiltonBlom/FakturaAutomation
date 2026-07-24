@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "7V4hItD1c3ysBgohNcGxg7qqxFlky5W5TNNR+G8VgG0=",
+  "Source": "FakturaExtraktion.Web",
+  "BasePath": "_content/FakturaExtraktion.Web",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "FakturaExtraktion.Web\\wwwroot",
+      "Source": "FakturaExtraktion.Web",
+      "ContentRoot": "D:\\Projekt\\.net\\FakturaAutomation\\FakturaExtraktion.Web\\wwwroot\\",
+      "BasePath": "_content/FakturaExtraktion.Web",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\Projekt\\.net\\FakturaAutomation\\FakturaExtraktion.Web\\wwwroot\\app.css",
+      "SourceId": "FakturaExtraktion.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Projekt\\.net\\FakturaAutomation\\FakturaExtraktion.Web\\wwwroot\\",
+      "BasePath": "_content/FakturaExtraktion.Web",
+      "RelativePath": "app.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\app.css"
+    }
+  ]
+}

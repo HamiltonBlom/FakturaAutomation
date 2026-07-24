@@ -1,0 +1,47 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = FakturaExtraktion.Web
+build_property.RootNamespace = FakturaExtraktion.Web
+build_property.ProjectDir = c:\Users\Hamilton\Desktop\HFB\Case studies\Demo 3\FakturaExtraktion.Web\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = c:\Users\Hamilton\Desktop\HFB\Case studies\Demo 3\FakturaExtraktion.Web
+build_property._RazorSourceGeneratorDebug = 
+
+[c:/Users/Hamilton/Desktop/HFB/Case studies/Demo 3/FakturaExtraktion.Web/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[c:/Users/Hamilton/Desktop/HFB/Case studies/Demo 3/FakturaExtraktion.Web/Components/FaltRad.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xGYWx0UmFkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[c:/Users/Hamilton/Desktop/HFB/Case studies/Demo 3/FakturaExtraktion.Web/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[c:/Users/Hamilton/Desktop/HFB/Case studies/Demo 3/FakturaExtraktion.Web/Components/Pages/Granskning.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHcmFuc2tuaW5nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[c:/Users/Hamilton/Desktop/HFB/Case studies/Demo 3/FakturaExtraktion.Web/Components/Radpostabell.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSYWRwb3N0YWJlbGwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[c:/Users/Hamilton/Desktop/HFB/Case studies/Demo 3/FakturaExtraktion.Web/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[c:/Users/Hamilton/Desktop/HFB/Case studies/Demo 3/FakturaExtraktion.Web/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,101 @@
+@* Radpostabell: redigerbar tabell över Radposter + summa. Läser/skriver
+   inte till backend själv – meddelar bara ändringar uppåt via
+   RadposterAndrade, precis som FaltRad. Ingen ny valideringslogik här:
+   summeringen är bara en visuell totalsrad, inte en ersättning för
+   IInvoiceValidator. *@
+
+<table class="radpost-tabell">
+    <thead>
+        <tr>
+            <th class="radpost-tabell__beskrivning">Beskrivning</th>
+            <th class="radpost-tabell__num">Antal</th>
+            <th class="radpost-tabell__num">À-pris</th>
+            <th class="radpost-tabell__num">Belopp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Radposter.Count == 0)
+        {
+            <tr>
+                <td colspan="4" class="radpost-tabell__tom">Inga radposter extraherade.</td>
+            </tr>
+        }
+        else
+        {
+            @for (var i = 0; i < Radposter.Count; i++)
+            {
+                var index = i; // egen kopia per iteration – undviker Blazors closure-fälla
+                var rad = Radposter[index];
+                <tr>
+                    <td>
+                        <input class="falt-input falt-input--tabell" value="@rad.Beskrivning"
+                               @oninput="e => AndraRad(index, r => r with { Beskrivning = e.Value?.ToString() ?? string.Empty })" />
+                    </td>
+                    <td class="radpost-tabell__num">
+                        <input class="falt-input falt-input--tabell falt-input--num" inputmode="decimal"
+                               value="@FormateraAntal(rad.Antal)"
+                               @onchange="e => AndraRad(index, r => r with { Antal = TolkaTal(e.Value) })" />
+                    </td>
+                    <td class="radpost-tabell__num">
+                        <input class="falt-input falt-input--tabell falt-input--num" inputmode="decimal"
+                               value="@FormateraBelopp(rad.Enhetspris)"
+                               @onchange="e => AndraRad(index, r => r with { Enhetspris = TolkaTal(e.Value) })" />
+                    </td>
+                    <td class="radpost-tabell__num">
+                        <input class="falt-input falt-input--tabell falt-input--num" inputmode="decimal"
+                               value="@FormateraBelopp(rad.Radbelopp)"
+                               @onchange="e => AndraRad(index, r => r with { Radbelopp = TolkaTal(e.Value) })" />
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="radpost-tabell__summa-label">Summa radposter</td>
+            <td class="radpost-tabell__num radpost-tabell__summa">@FormateraBelopp(SummaRadbelopp) kr</td>
+        </tr>
+    </tfoot>
+</table>
+
+@code {
+    [Parameter, EditorRequired]
+    public IReadOnlyList<Radpost> Radposter { get; set; } = [];
+
+    /// <summary>Anropas med den nya, fullständiga listan när en rad ändras.</summary>
+    [Parameter]
+    public EventCallback<IReadOnlyList<Radpost>> RadposterAndrade { get; set; }
+
+    private decimal SummaRadbelopp => Radposter.Sum(r => r.Radbelopp ?? 0m);
+
+    private Task AndraRad(int index, Func<Radpost, Radpost> uppdatera)
+    {
+        var nyLista = Radposter.ToList();
+        nyLista[index] = uppdatera(nyLista[index]);
+        return RadposterAndrade.InvokeAsync(nyLista);
+    }
+
+    private static readonly CultureInfo SvenskKultur = CultureInfo.GetCultureInfo("sv-SE");
+
+    private static string FormateraBelopp(decimal? varde) => varde is { } v ? v.ToString("N2", SvenskKultur) : "";
+
+    private static string FormateraAntal(decimal? varde) => varde is { } v ? v.ToString("0.##", SvenskKultur) : "";
+
+    private static decimal? TolkaTal(object? varde)
+    {
+        var text = varde?.ToString();
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return null;
+        }
+
+        // Normalisera bort tusentalsavgränsare (mellanslag/NBSP) och byt
+        // decimalkomma mot punkt, så "1 697,00", "1697,00" och "1697.00"
+        // alla tolkas korrekt oavsett vad användaren råkar skriva.
+        var normaliserad = text.Replace("\u00A0", "").Replace(" ", "").Replace(",", ".");
+
+        return decimal.TryParse(normaliserad, NumberStyles.Number, CultureInfo.InvariantCulture, out var tal)
+            ? tal
+            : null;
+    }
+}
