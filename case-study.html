@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Case study — Fakturaautomation. AI läser fakturan, C# kontrollerar summorna, människan godkänner. Byggt av HFB Media.">
-<title>Case study — Fakturaautomation · HFB Media</title>
+<meta name="description" content="Case study - Fakturaautomation. AI läser fakturan, C# kontrollerar summorna, människan godkänner. Byggt av HFB Media.">
+<title>Case study - Fakturaautomation · HFB Media</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,560;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -91,7 +91,7 @@ a{ color:inherit }
 .prose p + p{ margin-top:1.1rem }
 .alt{ background:var(--surface); border-block:1px solid var(--line) }
 
-/* Feature cards — amber margin flag, echoing the app */
+/* Feature cards - amber margin flag, echoing the app */
 .features{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:.5rem }
 .feature{ background:var(--surface); padding:1.5rem 1.4rem 1.5rem 1.6rem; border:1px solid var(--line);
   border-left:3px solid var(--forest-line); border-radius:var(--radius-m); box-shadow:var(--shadow-card) }
@@ -134,7 +134,7 @@ a{ color:inherit }
 <nav class="nav">
   <div class="container nav-inner">
     <a class="wordmark" href="#top">HFB&nbsp;Media</a>
-    <span class="nav-tag">Case study — Fakturaautomation</span>
+    <span class="nav-tag">Case study - Fakturaautomation</span>
     <a class="btn btn-ghost btn-sm" href="README.md">Om demon →</a>
   </div>
 </nav>
@@ -143,7 +143,7 @@ a{ color:inherit }
   <div class="container">
     <p class="eyebrow">AI-verktyg · byggt av HFB Media</p>
     <h1>AI läser fakturan. Koden kontrollerar summorna. Du godkänner.</h1>
-    <p class="lede">Ett verktyg som automatiserar det tråkigaste jobbet på kontoret — att mata in leverantörsfakturor för hand — utan att du behöver blint lita på en AI. Inget skickas automatiskt.</p>
+    <p class="lede">Ett verktyg som automatiserar det tråkigaste jobbet på kontoret - att mata in leverantörsfakturor för hand - utan att du behöver blint lita på en AI. Inget skickas automatiskt.</p>
     <div class="flow">
       <span class="step"><b>AI</b> läser</span>
       <span class="arrow">→</span>
@@ -173,8 +173,8 @@ a{ color:inherit }
   <div class="container reveal">
     <div class="section-head">
       <p class="eyebrow">Idén</p>
-      <h2>Användbar och att lita på — samtidigt</h2>
-      <p class="lede">Fakturainmatning är repetitivt och lätt att göra fel i. Men det går inte att bara lämna åt en AI och blunda — betalar man fel belopp till fel konto blir det dyrt.</p>
+      <h2>Användbar och att lita på</h2>
+      <p class="lede">Fakturainmatning är repetitivt och lätt att göra fel i. Men det går inte att bara lämna åt en AI och blunda - betalar man fel belopp till fel konto blir det dyrt.</p>
     </div>
     <div class="prose">
       <p>Så jag byggde det på det enda sätt jag tycker är försvarbart: låt AI:n göra det den är bra på (läsa och tolka), låt koden göra det den är bra på (räkna och kontrollera), och låt en människa ta det sista beslutet.</p>
@@ -190,12 +190,12 @@ a{ color:inherit }
       <h2>Från fakturafil till godkänd post</h2>
     </div>
     <div class="features">
-      <div class="feature"><h3>AI-extraktion</h3><p>Claude läser fakturan och returnerar strukturerad data. PDF skickas rå till modellen som läser den som en människa — inte via opålitlig textutvinning.</p></div>
+      <div class="feature"><h3>AI-extraktion</h3><p>Claude läser fakturan och returnerar strukturerad data. PDF skickas rå till modellen som läser den som en människa - inte via opålitlig textutvinning.</p></div>
       <div class="feature"><h3>Kontroll i C#</h3><p>Koden räknar om summan, kollar organisationsnummer och datumordning. Går något inte ihop blockeras godkännandet.</p></div>
       <div class="feature"><h3>Konsolapp</h3><p>Fil in, JSON ut. För den som vill köra det i ett flöde eller skript.</p></div>
       <div class="feature"><h3>Granskningsvy</h3><p>Tvåkolumnsvy med redigerbara fält. Ändrar du ett belopp körs kontrollen om direkt och bannern uppdateras utan sidladdning.</p></div>
       <div class="feature"><h3>Godkänn-knapp</h3><p>Aktiv först när alla avvikelser är lösta. Inget lämnar systemet innan en människa tryckt på den.</p></div>
-      <div class="feature"><h3>Marginalflagga</h3><p>Flaggade fält får en bärnstensmarkering — en nick till hur en revisor annoterar en pappersfaktura för hand.</p></div>
+      <div class="feature"><h3>Marginalflagga</h3><p>Flaggade fält får en bärnstensmarkering - en nick till hur en revisor annoterar en pappersfaktura för hand.</p></div>
     </div>
   </div>
 </section>
@@ -204,12 +204,12 @@ a{ color:inherit }
   <div class="container reveal">
     <div class="section-head">
       <p class="eyebrow">Tekniken, utan trötta ord</p>
-      <h2>Riktig stack, inte en leksak</h2>
+      <h2>Stack</h2>
       <p class="lede">Byggt så att AI:ns gissningar aldrig är det som avgör om en faktura godkänns.</p>
     </div>
     <ul class="tech">
-      <li><span class="k">Stack</span><span class="v"><strong>.NET 8 / C#</strong> i botten — samma sorts stack som riktiga ekonomisystem bygger på.</span></li>
-      <li><span class="k">AI</span><span class="v"><strong>Claude via Anthropic API</strong> med tvingat verktygsanrop, så svaret alltid har rätt struktur. <strong>temperature 0</strong> — samma faktura tolkas likadant varje gång.</span></li>
+      <li><span class="k">Stack</span><span class="v"><strong>.NET 8 / C#</strong> i botten - samma sorts stack som riktiga ekonomisystem bygger på.</span></li>
+      <li><span class="k">AI</span><span class="v"><strong>Claude via Anthropic API</strong> med tvingat verktygsanrop, så svaret alltid har rätt struktur. <strong>temperature 0</strong> - samma faktura tolkas likadant varje gång.</span></li>
       <li><span class="k">Delad kärna</span><span class="v"><strong>Extraktion och kontroll är skrivna en gång</strong> och används av både konsolappen och webbvyn. Ingen dubbel kod som kan glida isär.</span></li>
       <li><span class="k">Kontroll</span><span class="v"><strong>Hårda och mjuka signaler hålls isär.</strong> Bara kodens egna kontroller blockerar godkännande; AI:ns funderingar visas men stoppar inte.</span></li>
       <li><span class="k">Säkerhet</span><span class="v"><strong>API-nyckeln hårdkodas aldrig och loggas aldrig.</strong></span></li>
@@ -237,7 +237,7 @@ a{ color:inherit }
   <div class="container reveal">
     <p class="eyebrow" style="justify-content:center">Vad det betyder för dig</p>
     <h2>Har du en hög fakturor som någon knappar in för hand?</h2>
-    <p>Det — eller vilken repetitiv pappersprocess som helst — är precis den sortens AI-lösning jag bygger, till ett rejält lågt pris medan jag bygger upp min portfolio. Din version anpassas efter dina fakturor och ditt flöde.</p>
+    <p>Det - eller vilken repetitiv pappersprocess som helst - är precis den sortens AI-lösning jag bygger, till ett rejält lågt pris medan jag bygger upp min portfolio. Din version anpassas efter dina fakturor och ditt flöde.</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="mailto:hamiltonblom1@gmail.com?subject=AI-l%C3%B6sning%20till%20mitt%20f%C3%B6retag">Vill du att jag visar vad jag menar?</a>
       <a class="btn btn-ghost" href="README.md">Teknisk översikt</a>
@@ -247,7 +247,7 @@ a{ color:inherit }
 
 <footer class="footer">
   <div class="container">
-    <p><strong style="font-family:var(--font-display)">HFB&nbsp;Media</strong> — hemsidor och enkla AI-lösningar för lokala företag.</p>
+    <p><strong style="font-family:var(--font-display)">HFB&nbsp;Media</strong> - hemsidor och enkla AI-lösningar för lokala företag.</p>
     <p class="mono">Fakturaautomation · .NET 8 + Claude · byggt som AI-demo</p>
   </div>
 </footer>
